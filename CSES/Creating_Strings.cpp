@@ -17,8 +17,8 @@ using namespace std;
 #define  vi   vector<ll>
 #define  vs   vector<string>
 #define  vvi  vector<vector<ll> > 
-#define  vvp  vector<vector<pii> >
-#define  vp   vector<pii>
+#define  vvp  vector<vector<pi> >
+#define  vp   vector<pi>
 #define  ump  unordered_map
 #define  MOD  1000000007
 #define  eps  1e-12
@@ -54,6 +54,13 @@ using namespace std;
  for (ll z = (a); z <= (b); z++) cout << (arr[z]) << " "; \
  cout << endl;
 
+void err(istream_iterator<string> it) {}
+template<typename T, typename... Args>
+void err(istream_iterator<string> it, T a, Args... args) {
+  cout << *it << " = " << a << endl;
+  err(++it, args...);
+}
+
 void file_io(){
     fast_cin();
     #ifndef ONLINE_JUDGE
@@ -62,23 +69,33 @@ void file_io(){
     #endif
 }
 
-vs gray_code(ll n){
-    if(n == 1) return {"0","1"};
-    vs k = gray_code(n-1);
-    ll m = 2 * sz(k);
-    vs res(m);
-
-    for(ll i = 0, j = m-1; i < sz(k); i++, j--){
-        res[i] = "0" + k[i];
-        res[j] = "1" + k[i];
+set<string> createAllStrings(ll n, string rem){
+    if(n == 1){
+        return {rem};
     }
+    char ch = rem[0];
+    set<string> data = createAllStrings(n - 1, rem.substr(1));
+    // Now find distinct characters in remaining
+    set<string> res;
+    
+    for(auto &el : data){
+        res.insert(ch + el);
+        for(ll i = 1 ; i < n; i++){
+            res.insert(el.substr(0, i) + ch + el.substr(i));
+        }
+    }
+    
     return res;
 }
- 
+
 void solve(){
-    ll n;
-    cin >> n;
-    for(auto &el : gray_code(n)){
+    string s;
+    cin >> s;
+    ll n = s.size();
+
+    set<string> res = createAllStrings(n, s);
+    cout << res.size() << "\n";
+    for(auto &el : res){
         cout << el << "\n";
     }
 }

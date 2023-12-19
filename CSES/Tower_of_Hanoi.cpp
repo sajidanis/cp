@@ -17,8 +17,8 @@ using namespace std;
 #define  vi   vector<ll>
 #define  vs   vector<string>
 #define  vvi  vector<vector<ll> > 
-#define  vvp  vector<vector<pii> >
-#define  vp   vector<pii>
+#define  vvp  vector<vector<pi> >
+#define  vp   vector<pi>
 #define  ump  unordered_map
 #define  MOD  1000000007
 #define  eps  1e-12
@@ -30,7 +30,7 @@ using namespace std;
 #define  endl "\n"
 #define  dbg(x) cout<<#x<<" = "<<x<<ln
 #define  mp make_pair
-#define  pb emplace_back
+#define  pb push_back
 #define  ff first
 #define  ss second
 #define  INF 1e18
@@ -54,6 +54,13 @@ using namespace std;
  for (ll z = (a); z <= (b); z++) cout << (arr[z]) << " "; \
  cout << endl;
 
+void err(istream_iterator<string> it) {}
+template<typename T, typename... Args>
+void err(istream_iterator<string> it, T a, Args... args) {
+  cout << *it << " = " << a << endl;
+  err(++it, args...);
+}
+
 void file_io(){
     fast_cin();
     #ifndef ONLINE_JUDGE
@@ -62,24 +69,23 @@ void file_io(){
     #endif
 }
 
-vs gray_code(ll n){
-    if(n == 1) return {"0","1"};
-    vs k = gray_code(n-1);
-    ll m = 2 * sz(k);
-    vs res(m);
-
-    for(ll i = 0, j = m-1; i < sz(k); i++, j--){
-        res[i] = "0" + k[i];
-        res[j] = "1" + k[i];
+void tower_of_hanoi(ll n, ll src, ll aux, ll dest, vp &step){
+    if(!n) {
+        return;
     }
-    return res;
+    tower_of_hanoi(n-1, src, dest, aux, step);
+    step.emplace_back(src, dest);
+    tower_of_hanoi(n-1, aux, src, dest, step);
 }
  
 void solve(){
     ll n;
     cin >> n;
-    for(auto &el : gray_code(n)){
-        cout << el << "\n";
+    vp steps;
+    tower_of_hanoi(n, 1, 2, 3, steps);
+    cout << sz(steps) << "\n";
+    for(auto &[f, s] : steps){
+        cout << f << " " << s << "\n"; 
     }
 }
  
