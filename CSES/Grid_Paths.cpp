@@ -69,39 +69,64 @@ void file_io(){
     #endif
 }
 
+pi getNewPoints(ll r, ll c, char path){
+    if(path == 'D' || path == 'd'){
+        return {r+1, c};
+    }
+    if(path == 'U' || path == 'u'){
+        return {r-1, c};
+    }
+    if(path == 'L' || path == 'l'){
+        return {r, c-1};
+    }
+    if(path == 'R' || path == 'r'){
+        return {r, c+1};
+    }
+}
+
+bool check(vvi &grid, ll size){
+    loop(i, 0, size){
+        loop(j, 0, size){
+            if(grid[i][j] == 0){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+ll pathLength = 48;
+
+void findTotalPaths(ll idx, ll r, ll c, ll &ways, vvi &grid, vector<char> &paths, ll size){
+    if(grid[size-1][0] == 1 && check(grid, size)){
+        ways += 1;
+        return;
+    }
+    if(idx == pathLength){
+        return;
+    }
+
+    for(auto &el : paths){
+        auto [new_r, new_c] = getNewPoints(r, c, el);
+        if(new_r > size-1 || new_r < 0 || new_c > size-1 || new_c < 0 || grid[new_r][new_c]){
+            continue;
+        }
+        grid[new_r][new_c] = 1;
+        findTotalPaths(idx+1, new_r, new_c, ways, grid, paths, size);
+        grid[new_r][new_c] = 0;
+    }
+
+}
  
 void solve(){
-    ll n;
-    cin >> n;
-    vi arr(n);
-
-    ll s = 0;
-    loop(i, 0, n){
-        cin >> arr[i];
-        s += arr[i];
-    }
-    ll h = s/2;
-    ll max_h = 0;
-    for(ll i = 1 ; i < pow(2, n); i++){
-        ll k = i;
-        ll z = 0;
-        ll idx = 0;
-        while(k){
-            ll shift = __builtin_ctz(k);
-            z += arr[shift + idx];
-            k >>= shift+1;
-            idx += shift+1;
-        }
-        if(z == h){
-            cout << (s - h) - h;
-            return;
-        }
-        if(z > max_h && z < h){
-            max_h = z;
-        }
-    }
-    
-    cout << (s - max_h) - max_h;
+    string s;
+    cin >> s;
+    ll size = 7;
+    vvi grid(size, vi(size, 0));
+    grid[0][0] = 1;
+    vector<char> paths = {'D', 'U', 'L', 'R'};
+    ll ways = 0;
+    findTotalPaths(0, 0, 0, ways, grid, paths, size);
+    cout << ways;
 }
  
 int main()

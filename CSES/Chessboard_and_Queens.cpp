@@ -54,6 +54,50 @@ using namespace std;
  for (ll z = (a); z <= (b); z++) cout << (arr[z]) << " "; \
  cout << endl;
 
+template<class T>
+class matrix{
+    public :
+    vector<vector<T>> mat;
+    size_t r, c;
+
+    matrix(size_t rows, size_t cols, T initValue) : r(rows), c(cols){
+        mat.resize(r, vector<T>(c, initValue));
+    }
+
+    matrix operator*(const matrix<T> &b) const {
+        matrix<T> res(r, b.c, 0);
+        for(int i=0; i<r; i++){
+            for(int j=0; j<b.c; j++){
+                for(int k=0; k<c; k++){
+                    res.d[i][j] += ((mat[i][k]%MOD)*(b.mat[k][j]%MOD));
+                    res.d[i][j] %= MOD;
+                }
+            }
+        }
+        return res;
+    } 
+    friend istream &operator>>(istream &in, matrix<T> &m){
+        char x;
+        for(ll i = 0 ; i < m.r ; i++){
+            loop(j, 0, m.c){
+                in >> x;
+                m.mat[i][j] = x == '*';
+            }
+        }
+        return in;
+    }
+
+    friend ostream &operator<<(ostream &out, matrix<T> &m){
+        for(ll i = 0 ; i < m.r ; i++){
+            loop(j, 0, m.c){
+                out << m.mat[i][j] << " ";
+            }
+            out << "\n";
+        }
+        return out;
+    }
+};
+
 void err(istream_iterator<string> it) {}
 template<typename T, typename... Args>
 void err(istream_iterator<string> it, T a, Args... args) {
@@ -69,39 +113,33 @@ void file_io(){
     #endif
 }
 
+ll n_queen(ll r, vi &col, vi &diag1, vi &diag2, ll &ways, ll n, matrix<bool> &reserved){
+    if(r == n){
+        ways++;
+        return ways;
+    }
+    loop(c, 0, n){
+        if(col[c] || diag1[r+c] || diag2[r-c+n-1] || reserved.mat[r][c]) continue;
+        col[c] = 1;
+        diag1[r+c] = 1;
+        diag2[r-c+n-1] = 1;
+        n_queen(r+1, col, diag1, diag2, ways, n, reserved);
+        col[c] = 0;
+        diag1[r+c] = 0;
+        diag2[r-c+n-1] = 0;
+    }
+    return ways;
+}
  
 void solve(){
-    ll n;
-    cin >> n;
-    vi arr(n);
-
-    ll s = 0;
-    loop(i, 0, n){
-        cin >> arr[i];
-        s += arr[i];
-    }
-    ll h = s/2;
-    ll max_h = 0;
-    for(ll i = 1 ; i < pow(2, n); i++){
-        ll k = i;
-        ll z = 0;
-        ll idx = 0;
-        while(k){
-            ll shift = __builtin_ctz(k);
-            z += arr[shift + idx];
-            k >>= shift+1;
-            idx += shift+1;
-        }
-        if(z == h){
-            cout << (s - h) - h;
-            return;
-        }
-        if(z > max_h && z < h){
-            max_h = z;
-        }
-    }
-    
-    cout << (s - max_h) - max_h;
+    matrix<bool> data(8, 8, false);
+    cin >> data;
+    ll n = 8;
+    vi col(n, 0);
+    vi diag1(2*n-1, 0), diag2(2*n-1, 0);
+    ll ways = 0;
+    ll cnt = n_queen(0, col, diag1, diag2, ways, n, data);
+    cout << ways;
 }
  
 int main()

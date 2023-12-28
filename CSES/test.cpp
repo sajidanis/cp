@@ -69,39 +69,53 @@ void file_io(){
     #endif
 }
 
- 
-void solve(){
-    ll n;
-    cin >> n;
-    vi arr(n);
+void setZeroes(vector<vector<int>>& matrix) {
+    vector<pair<int, int>> zeros;
+    for(int i = 0 ; i < matrix.size(); i++){
+        for(int j = 0 ; j < matrix[0].size() ; j++){
+            if(matrix[i][j] == 0){
+                setRow(i, matrix, -1);
+                setCol(j, matrix, -1);
+            }
+        }
+    }
 
-    ll s = 0;
-    loop(i, 0, n){
-        cin >> arr[i];
-        s += arr[i];
-    }
-    ll h = s/2;
-    ll max_h = 0;
-    for(ll i = 1 ; i < pow(2, n); i++){
-        ll k = i;
-        ll z = 0;
-        ll idx = 0;
-        while(k){
-            ll shift = __builtin_ctz(k);
-            z += arr[shift + idx];
-            k >>= shift+1;
-            idx += shift+1;
-        }
-        if(z == h){
-            cout << (s - h) - h;
-            return;
-        }
-        if(z > max_h && z < h){
-            max_h = z;
+    for(int i = 0; i < matrix.size() ; i++){
+        for(int j = 0 ; j < matrix[0].size() ; j++){
+            if(matrix[i][j] < 0){
+                matrix[i][j] = 0;
+            }
         }
     }
+}
+
+void setRow(int r, vector<vector<int>> &matrix, int data){
+    if(matrix[r][0] < 0){
+        return;
+    }
+    for(int i = 0 ; i < matrix[r].size() ; i++){
+        if(matrix[r][i] == 0){
+            matrix[r][i] = data;
+            setCol(i, matrix, data);
+        }
+        
+    }
+}
+
+void setCol(int c, vector<vector<int>> &matrix, int data){
+    if(matrix[0][c] < 0){
+        return;
+    }
+    for(int i = 0 ; i < matrix.size() ; i++){
+        if(matrix[i][c] == 0){
+            matrix[i][c] = data;
+            setRow(i, matrix, data);
+        }
+    }
+}
+
+void solve(){
     
-    cout << (s - max_h) - max_h;
 }
  
 int main()
@@ -109,7 +123,7 @@ int main()
     clock_t begin = clock();
     file_io();
     ll t = 1;
-    // cin >> t;
+    //cin >> t;
     while(t--){
             solve();
             cout << endl;

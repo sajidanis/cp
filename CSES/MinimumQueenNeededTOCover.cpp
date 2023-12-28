@@ -1,4 +1,4 @@
-// Problem Link ==> 
+// Problem Link ==> https://www.geeksforgeeks.org/minimum-queens-required-to-cover-all-the-squares-of-a-chess-board/?ref=lbp
 /* Md Sajid Anis */
 #pragma GCC optimize("Ofast")
 #pragma GCC optimize("unroll-loops")
@@ -68,40 +68,11 @@ void file_io(){
             freopen("output", "w", stdout);
     #endif
 }
-
  
 void solve(){
-    ll n;
-    cin >> n;
-    vi arr(n);
-
-    ll s = 0;
-    loop(i, 0, n){
-        cin >> arr[i];
-        s += arr[i];
-    }
-    ll h = s/2;
-    ll max_h = 0;
-    for(ll i = 1 ; i < pow(2, n); i++){
-        ll k = i;
-        ll z = 0;
-        ll idx = 0;
-        while(k){
-            ll shift = __builtin_ctz(k);
-            z += arr[shift + idx];
-            k >>= shift+1;
-            idx += shift+1;
-        }
-        if(z == h){
-            cout << (s - h) - h;
-            return;
-        }
-        if(z > max_h && z < h){
-            max_h = z;
-        }
-    }
-    
-    cout << (s - max_h) - max_h;
+    ll n, m;
+    cin >> n >> m;
+    vvi board(n, vi(m, 0));
 }
  
 int main()
