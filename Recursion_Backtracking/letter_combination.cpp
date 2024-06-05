@@ -1,4 +1,4 @@
-// Problem Link ->
+// Problem Link -> https://leetcode.com/problems/letter-combinations-of-a-phone-number/
 /* Md Sajid Anis */
 #include<bits/stdc++.h>
 //#include<ext/pb_ds/assoc_container.hpp>
@@ -33,14 +33,41 @@ void file_i_o()
 #endif
 }
 
-void reverseList(list<int> l){
-    
+vs util(string s, map<string, vs> &charMap){
+    if(s.length() == 1){
+        return charMap[s];
+    }
+
+    auto prev = util(s.substr(1), charMap);
+
+    // Self Work
+    auto cur = charMap[s.substr(0,1)];
+    vs res;
+    for(auto &el : cur){
+        for(auto &d : prev){
+            res.push_back(el + d);
+        }
+    }
+    return res;
 }
 
 void solve() {
-    // make a list
+    map<string, vs> charMap;
+    charMap["2"] = {"a", "b", "c"};
+    charMap["3"] = {"d", "e", "f"};
+    charMap["4"] = {"g", "h", "i"};
+    charMap["5"] = {"j", "k", "l"};
+    charMap["6"] = {"m", "n", "o"};
+    charMap["7"] = {"p", "q", "r", "s"};
+    charMap["8"] = {"t", "u", "v"};
+    charMap["9"] = {"w", "x", "y", "z"};
 
-
+    string s;
+    cin >> s;
+    auto res = util(s, charMap);
+    for(auto &el : res){
+        cout << el << " ";
+    }
 }
 
 int main(int argc, char const *argv[]) {

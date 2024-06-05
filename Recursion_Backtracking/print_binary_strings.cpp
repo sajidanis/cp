@@ -1,4 +1,4 @@
-// Problem Link ->
+// Problem Link -> Print the binary strings with no executive 1s
 /* Md Sajid Anis */
 #include<bits/stdc++.h>
 //#include<ext/pb_ds/assoc_container.hpp>
@@ -33,14 +33,33 @@ void file_i_o()
 #endif
 }
 
-void reverseList(list<int> l){
-    
+vs printStrings(ll x){
+    if(x == 1){
+        return {"0", "1"};
+    }
+    if(x == 2){
+        return {"00", "01", "10"};
+    }
+    auto prev_0 = printStrings(x-1);
+    auto prev_1 = printStrings(x-2);
+
+    vs res;
+    for(auto &el : prev_0){
+        res.push_back("0" + el);
+    }
+    for(auto &el : prev_1){
+        res.push_back("10" + el);
+    }
+    return res;
 }
 
 void solve() {
-    // make a list
-
-
+    ll n;
+    cin >> n;
+    auto res = printStrings(n);
+    for(auto &el : res){
+        cout << el << "\n";
+    }
 }
 
 int main(int argc, char const *argv[]) {

@@ -33,14 +33,51 @@ void file_i_o()
 #endif
 }
 
-void reverseList(list<int> l){
-    
+vs util(ll x){
+    if(x == 1){
+        return {"()"};
+    }
+    if(x == 2){
+        return {"()()", "(())"};
+    }
+
+    auto prev = util(x-1);
+
+    vs res;
+
+    for(auto &el : prev){
+        res.push_back("()" + el);
+        res.push_back("(" + el + ")");
+        if(find(res.begin(), res.end(), el+"()") == res.end()){
+            res.push_back(el + "()");
+        }
+    }
+    return res;
+}
+
+void gen(ll open, ll close, ll n, string out){
+    if(close == n){
+        cout << out << "\n";
+        return;
+    }
+    if(open < n) {
+        gen(open+1, close, n, out+"(");
+    }
+    if(close < open){
+        gen(open, close+1, n, out+")");
+    }
 }
 
 void solve() {
-    // make a list
+    ll n;
+    cin >> n;
 
+    gen(0, 0, n, "");
 
+    // auto res = util(n);
+    // for(auto &el : res){
+    //     cout << el << "\n";
+    // }
 }
 
 int main(int argc, char const *argv[]) {
