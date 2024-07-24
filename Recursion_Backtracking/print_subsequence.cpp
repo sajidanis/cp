@@ -22,6 +22,14 @@ using namespace std;
 #define loop(var, start, end) for(ll var = start; var < end; var++)
 #define loop_rev(var, start, end) for(ll var = start; var > end; var--)
 
+template <typename T> 
+ostream& operator<<(ostream& os, const vector<T>& v) { 
+    for(auto &el : v){
+        os << el << "";
+    }
+    return os; 
+}
+
 void file_i_o()
 {
     ios_base::sync_with_stdio(0); 
@@ -45,10 +53,27 @@ vs get_subseq(string s){
     ans.push_back(ch);
     for(auto &el : prev_ans){
         ans.push_back(el);
-        ans.push_back(ch+el);
+        ans.push_back(ch+el); // String concatanation is expensive
     }
     return ans;
 }
+
+std::vector<char> v;
+vector< vector<char> > result;
+
+void subsequence(std::string &str, ll i){
+    if(i == str.size()){
+        result.push_back(v);
+        return;
+    }
+
+    char ch = str[i];
+    v.push_back(ch);
+    subsequence(str, i+1);
+    v.pop_back();
+    subsequence(str, i+1);
+}
+
 
 bool myComparator(string s1, string s2){
     return s1.length() < s2.length();
@@ -57,9 +82,14 @@ bool myComparator(string s1, string s2){
 void solve() {
     string s;
     cin >> s;
-    vs subseq = get_subseq(s);
-    sort(subseq.begin(), subseq.end(), myComparator);
-    for(auto &el : subseq){
+    v.reserve(s.size());
+    result.reserve(1 << (s.size()));
+
+    subsequence(s, 0);
+
+    // vs subseq = get_subseq(s);
+    // sort(subseq.begin(), subseq.end(), myComparator);
+    for(auto &el : result){
         cout << el << "\n";
     }
 }
