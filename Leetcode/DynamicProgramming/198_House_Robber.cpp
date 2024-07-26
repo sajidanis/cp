@@ -33,60 +33,40 @@ void file_i_o()
 #endif
 }
 
-bool isValidPos(int row, int col, int n){
-    return row >= 0 and col >= 0 and row < n and col < n;
-}
-
-bool isSafe(vector<vector<bool>> &board, int n, int row, int col){
-    if(isValidPos(row - 2, col - 1, n) && board[row-2][col-1]){
-        return false;
+int houseRobber(int i, vector<int> &arr){
+    if(i == 0){
+        return arr[0];
     }
-
-    if(isValidPos(row - 2, col + 1, n) && board[row-2][col+1]){
-        return false;
+    if(i == 1){
+        return max(arr[0], arr[1]);
     }
-
-    if(isValidPos(row - 1, col - 2, n) && board[row-1][col-2]){
-        return false;
+    int a = arr[0];
+    int b = max(arr[0], arr[1]);
+    int c = 0;
+    int n = arr.size();
+    for(int i = 2 ; i < n ; i++){
+        c = max(b, a + arr[i]);
+        a = b;
+        b = c;
     }
-
-    if(isValidPos(row - 1, col + 2, n) && board[row-1][col+2]){
-        return false;
-    }
-    return true;
-}
-ll ways = 0;
-
-void nknights(ll sr, ll sc, ll placed, ll n, vector<vector<bool>> &board){
-    if(placed == n){
-        ways++;
-        return;
-    }
-
-    for(ll row = sr; row < n ; row++){
-        for(ll col = (row == sr ? sc : 0); col < n ; col++){
-            if(not board[row][col] && isSafe(board, n, row, col)){
-                board[row][col] = true;
-                nknights(row, col+1, placed+1, n, board);
-                board[row][col] = false;
-            }
-        }
-    }
+    return c;
 }
 
 void solve() {
-    ll n;
+    int n;
     cin >> n;
-    vector<vector<bool>> board(n, vector<bool>(n, false));
-    nknights(0, 0, 0, n, board);
-    cout << ways;
+    vector<int> arr(n);
+    loop(i, 0, n){
+        cin >> arr[i];
+    }
+    cout << houseRobber(n, arr);
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    // cin >> t;
+    //cin >> t;
     while (t--) {
          solve();
          cout << "\n";

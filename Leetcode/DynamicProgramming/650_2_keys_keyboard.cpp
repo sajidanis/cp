@@ -33,60 +33,31 @@ void file_i_o()
 #endif
 }
 
-bool isValidPos(int row, int col, int n){
-    return row >= 0 and col >= 0 and row < n and col < n;
-}
+ll minSteps(ll n){
+    vector<ll> dp(n+1, inf);
+    dp[0] = 0;
+    dp[1] = 0;
 
-bool isSafe(vector<vector<bool>> &board, int n, int row, int col){
-    if(isValidPos(row - 2, col - 1, n) && board[row-2][col-1]){
-        return false;
-    }
-
-    if(isValidPos(row - 2, col + 1, n) && board[row-2][col+1]){
-        return false;
-    }
-
-    if(isValidPos(row - 1, col - 2, n) && board[row-1][col-2]){
-        return false;
-    }
-
-    if(isValidPos(row - 1, col + 2, n) && board[row-1][col+2]){
-        return false;
-    }
-    return true;
-}
-ll ways = 0;
-
-void nknights(ll sr, ll sc, ll placed, ll n, vector<vector<bool>> &board){
-    if(placed == n){
-        ways++;
-        return;
-    }
-
-    for(ll row = sr; row < n ; row++){
-        for(ll col = (row == sr ? sc : 0); col < n ; col++){
-            if(not board[row][col] && isSafe(board, n, row, col)){
-                board[row][col] = true;
-                nknights(row, col+1, placed+1, n, board);
-                board[row][col] = false;
-            }
+    for(int i = 2; i <= n; i++){
+        for(int j = i-1 ; j > 0 ; j--){
+            if(i % j == 0)
+                dp[i] = min(dp[i], dp[j] + (i / j));
         }
     }
+    return dp[n];
 }
 
 void solve() {
     ll n;
     cin >> n;
-    vector<vector<bool>> board(n, vector<bool>(n, false));
-    nknights(0, 0, 0, n, board);
-    cout << ways;
+    cout << minSteps(n);
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    // cin >> t;
+    //cin >> t;
     while (t--) {
          solve();
          cout << "\n";

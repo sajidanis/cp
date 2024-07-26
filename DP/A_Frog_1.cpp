@@ -33,60 +33,32 @@ void file_i_o()
 #endif
 }
 
-bool isValidPos(int row, int col, int n){
-    return row >= 0 and col >= 0 and row < n and col < n;
-}
-
-bool isSafe(vector<vector<bool>> &board, int n, int row, int col){
-    if(isValidPos(row - 2, col - 1, n) && board[row-2][col-1]){
-        return false;
-    }
-
-    if(isValidPos(row - 2, col + 1, n) && board[row-2][col+1]){
-        return false;
-    }
-
-    if(isValidPos(row - 1, col - 2, n) && board[row-1][col-2]){
-        return false;
-    }
-
-    if(isValidPos(row - 1, col + 2, n) && board[row-1][col+2]){
-        return false;
-    }
-    return true;
-}
-ll ways = 0;
-
-void nknights(ll sr, ll sc, ll placed, ll n, vector<vector<bool>> &board){
-    if(placed == n){
-        ways++;
-        return;
-    }
-
-    for(ll row = sr; row < n ; row++){
-        for(ll col = (row == sr ? sc : 0); col < n ; col++){
-            if(not board[row][col] && isSafe(board, n, row, col)){
-                board[row][col] = true;
-                nknights(row, col+1, placed+1, n, board);
-                board[row][col] = false;
-            }
-        }
-    }
-}
-
 void solve() {
-    ll n;
-    cin >> n;
-    vector<vector<bool>> board(n, vector<bool>(n, false));
-    nknights(0, 0, 0, n, board);
-    cout << ways;
+    ll N, K;
+    cin >> N >> K;
+    vi h(N);
+    loop(i, 0, N){
+        cin >> h[i];
+    }
+
+    vi dp(N+1, inf);
+
+    dp[0] = 0;
+    
+    for(ll j = 1 ; j < N ; j++){
+        for(ll k = 1; k <= K; k++){
+            if(j - k < 0) break;
+            dp[j] = min(dp[j], dp[j-k] + abs(h[j] - h[j-k])); 
+        }   
+    }
+    cout << dp[N-1];
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    // cin >> t;
+    //cin >> t;
     while (t--) {
          solve();
          cout << "\n";

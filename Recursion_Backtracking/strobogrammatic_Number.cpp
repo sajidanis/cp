@@ -33,60 +33,43 @@ void file_i_o()
 #endif
 }
 
-bool isValidPos(int row, int col, int n){
-    return row >= 0 and col >= 0 and row < n and col < n;
+vs helper(ll n, ll m){
+    if(n == 0) return {""};
+    if(n == 1) return {"0", "1", "8"};
+
+    vs temp = helper(n-2, m);
+    vs result;
+
+    for(auto &s: temp){
+        if(n != m) result.push_back("0" + s + "0");
+        result.push_back("1" + s + "1");
+        result.push_back("8" + s + "8");
+        result.push_back("6" + s + "9");
+        result.push_back("9" + s + "6");
+    }
+
+    return result;
 }
 
-bool isSafe(vector<vector<bool>> &board, int n, int row, int col){
-    if(isValidPos(row - 2, col - 1, n) && board[row-2][col-1]){
-        return false;
-    }
+vs stroboNumbers(ll n){
+    return helper(n, n);
 
-    if(isValidPos(row - 2, col + 1, n) && board[row-2][col+1]){
-        return false;
-    }
-
-    if(isValidPos(row - 1, col - 2, n) && board[row-1][col-2]){
-        return false;
-    }
-
-    if(isValidPos(row - 1, col + 2, n) && board[row-1][col+2]){
-        return false;
-    }
-    return true;
-}
-ll ways = 0;
-
-void nknights(ll sr, ll sc, ll placed, ll n, vector<vector<bool>> &board){
-    if(placed == n){
-        ways++;
-        return;
-    }
-
-    for(ll row = sr; row < n ; row++){
-        for(ll col = (row == sr ? sc : 0); col < n ; col++){
-            if(not board[row][col] && isSafe(board, n, row, col)){
-                board[row][col] = true;
-                nknights(row, col+1, placed+1, n, board);
-                board[row][col] = false;
-            }
-        }
-    }
 }
 
 void solve() {
     ll n;
     cin >> n;
-    vector<vector<bool>> board(n, vector<bool>(n, false));
-    nknights(0, 0, 0, n, board);
-    cout << ways;
+
+    for(auto &el : stroboNumbers(n)){
+        cout << el << "\n";
+    }
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    // cin >> t;
+    //cin >> t;
     while (t--) {
          solve();
          cout << "\n";
