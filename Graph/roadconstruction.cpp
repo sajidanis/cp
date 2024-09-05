@@ -1,4 +1,4 @@
-// Problem Link ->
+// Problem Link -> https://cses.fi/problemset/task/1676
 /* Md Sajid Anis */
 #include<bits/stdc++.h>
 //#include<ext/pb_ds/assoc_container.hpp>
@@ -32,51 +32,61 @@ void file_i_o()
     freopen("output", "w", stdout);
 #endif
 }
-vector<list<ll>> g;
 
+struct dsu {
+    vector<ll> parent;
+    vector<ll> size;
 
-// Kahns algorithm
-void topologicalSort(ll v){
-    vector<bool> visited(v, false);
-    vi indegree(v, 0);
-    for(auto edgeList : g){
-        for(auto v : edgeList){
-            indegree[v]++; 
+    ll numComponents = 0;
+    ll maxCompSize = 0;
+
+    void init(size_t N){
+        parent.resize(N);
+        size.assign(N, 1);
+
+        loop(i, 0, N){
+            parent[i] = i;
         }
-    }
-    queue<ll> q;
-    for(int i = 0 ; i < v ; i++){
-        if(indegree[i] == 0) q.push(i);
+        numComponents = N;
+        maxCompSize = 1;
     }
 
-    while(!q.empty()){
-        auto node = q.front();
-        q.pop();
-        cout << node << " ";
-        visited[node] = true;
-        for(auto nbr : g[node]){
-            if(visited[nbr]) continue;
-            indegree[nbr]--;
-            if(indegree[nbr] == 0){
-                q.push(nbr);
-            }
+    ll find_set(ll v){
+        if(parent[v] == v){
+            return v;
         }
+        return parent[v] = find_set(parent[v]);
     }
-}
 
+    void union_set(ll a, ll b){
+        a = find_set(a);
+        b = find_set(b);
+
+        if(a == b) return;
+
+        if(size[a] < size[b]){
+            swap(a, b);
+        }
+        parent[b] = a;
+        size[a] += size[b];
+        maxCompSize = max(maxCompSize, size[a]);
+        numComponents -= 1;
+    }
+};
 
 void solve() {
     ll n, m;
     cin >> n >> m;
-    g.assign(n, list<ll>());
-
+    dsu ds;
+    ds.init(n);
     while(m--){
-        int u, v;
-        cin >> u >> v;
-        u--; v--;
-        g[u].push_back(v);
+        int a, b;
+        cin >> a >> b;
+        a-- ; b--;
+        ds.union_set(a, b);
+
+        cout << ds.numComponents << " " << ds.maxCompSize << "\n";
     }
-    topologicalSort(n);
 }
 
 int main(int argc, char const *argv[]) {

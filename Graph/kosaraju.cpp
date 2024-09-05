@@ -32,51 +32,81 @@ void file_i_o()
     freopen("output", "w", stdout);
 #endif
 }
+
 vector<list<ll>> g;
+vector<list<ll>> gt;
+ll V = 0;
 
-
-// Kahns algorithm
-void topologicalSort(ll v){
-    vector<bool> visited(v, false);
-    vi indegree(v, 0);
-    for(auto edgeList : g){
-        for(auto v : edgeList){
-            indegree[v]++; 
+void dfs(ll node, vector<bool> &visited, stack<ll> &st){
+    visited[node] = true;
+    for(auto &nbr : g[node]){
+        if(not visited[nbr]){
+            dfs(nbr, visited, st);
         }
     }
-    queue<ll> q;
-    for(int i = 0 ; i < v ; i++){
-        if(indegree[i] == 0) q.push(i);
-    }
+    st.push(node);
+}
 
-    while(!q.empty()){
-        auto node = q.front();
-        q.pop();
-        cout << node << " ";
-        visited[node] = true;
-        for(auto nbr : g[node]){
-            if(visited[nbr]) continue;
-            indegree[nbr]--;
-            if(indegree[nbr] == 0){
-                q.push(nbr);
-            }
+void dfs(ll node, vector<bool> &visited, unordered_set<ll> &sc){
+    visited[node] = true;
+    sc.insert(node);
+    for(auto &nbr: gt[node]){
+        if(not visited[nbr]){
+            dfs(nbr, visited, sc);
         }
     }
 }
 
+vector<unordered_set<ll>> kosaraju(){
+    // Phase 1 
+    // Build the connected stack through dfs
+    stack<ll> st;
+    vector<bool> visited(V, false);
+    for(int i = 0 ; i < V ; i++){
+        if(not visited[i]){
+            dfs(i, visited, st);
+        }
+    }
+
+    // Phase 2
+    // from the transposed graph run the dfs from top of stack
+
+    vector<unordered_set<ll>> result;
+    visited.clear();
+    visited.assign(V, false);
+    while(not st.empty()){
+        auto node = st.top();
+        st.pop();
+        if(not visited[node]){
+            unordered_set<ll> sc;
+            dfs(node, visited, sc);
+            result.emplace_back(sc);
+            sc.clear();
+        }
+    }
+    return result;
+}
 
 void solve() {
     ll n, m;
     cin >> n >> m;
+    V = n;
     g.assign(n, list<ll>());
-
+    gt.assign(n, list<ll>());
     while(m--){
         int u, v;
         cin >> u >> v;
         u--; v--;
         g[u].push_back(v);
+        gt[v].push_back(u);
     }
-    topologicalSort(n);
+    auto res = kosaraju();
+    for(auto &sc : res){
+        for(auto &el : sc){
+            cout << el << " ";
+        }
+        cout << "\n";
+    }
 }
 
 int main(int argc, char const *argv[]) {

@@ -32,51 +32,43 @@ void file_i_o()
     freopen("output", "w", stdout);
 #endif
 }
-vector<list<ll>> g;
 
+vector<unordered_set<ll>> g;
 
-// Kahns algorithm
-void topologicalSort(ll v){
-    vector<bool> visited(v, false);
-    vi indegree(v, 0);
-    for(auto edgeList : g){
-        for(auto v : edgeList){
-            indegree[v]++; 
-        }
-    }
-    queue<ll> q;
-    for(int i = 0 ; i < v ; i++){
-        if(indegree[i] == 0) q.push(i);
-    }
-
-    while(!q.empty()){
-        auto node = q.front();
-        q.pop();
-        cout << node << " ";
-        visited[node] = true;
-        for(auto nbr : g[node]){
-            if(visited[nbr]) continue;
-            indegree[nbr]--;
-            if(indegree[nbr] == 0){
-                q.push(nbr);
-            }
+void dfs(ll node, vector<bool> &vis){
+    vis[node] = true;
+    for(auto &nbr : g[node]){
+        if(not vis[nbr]){
+            dfs(nbr, vis);
         }
     }
 }
 
-
 void solve() {
-    ll n, m;
-    cin >> n >> m;
-    g.assign(n, list<ll>());
-
-    while(m--){
-        int u, v;
-        cin >> u >> v;
-        u--; v--;
-        g[u].push_back(v);
+    ll n;
+    cin >> n;
+    g.assign(26, unordered_set<ll>());
+    vector<bool> nodes(26, false);
+    
+    loop(i, 0, n){
+        string inp;
+        cin >> inp;
+        nodes[inp[0] - 'a'] = true;
+        loop(j, 1, inp.size()){
+            g[inp[j-1] - 'a'].insert(inp[j] - 'a');
+            g[inp[j] - 'a'].insert(inp[j-1] - 'a');
+            nodes[inp[j] - 'a'] = true;
+        }
     }
-    topologicalSort(n);
+    vector<bool> vis(26, false);
+    ll res = 0;
+    loop(i, 0, 26){
+        if(nodes[i] and not vis[i]){
+            dfs(i, vis);
+            res++;
+        }
+    }
+    cout << res;
 }
 
 int main(int argc, char const *argv[]) {

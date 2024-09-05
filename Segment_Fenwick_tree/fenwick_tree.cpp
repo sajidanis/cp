@@ -32,51 +32,43 @@ void file_i_o()
     freopen("output", "w", stdout);
 #endif
 }
-vector<list<ll>> g;
 
+struct FenwickTree {
+    vector<int> bit;
+    int n;
 
-// Kahns algorithm
-void topologicalSort(ll v){
-    vector<bool> visited(v, false);
-    vi indegree(v, 0);
-    for(auto edgeList : g){
-        for(auto v : edgeList){
-            indegree[v]++; 
+    FenwickTree(int n){
+        this->n = n;
+        bit.assign(n, 0);
+    }
+
+    FenwickTree(vector<int> const &a) : FenwickTree(a.size()) {
+        for(size_t i = 0 ; i < a.size() ; i++){
+            add(i, a[i]);
         }
     }
-    queue<ll> q;
-    for(int i = 0 ; i < v ; i++){
-        if(indegree[i] == 0) q.push(i);
+
+    int sum(int r){
+        int ret = 0;
+        for(; r >= 0 ; r = (r & (r + 1)) - 1){
+            ret += bit[r];
+        }
+        return ret;
     }
 
-    while(!q.empty()){
-        auto node = q.front();
-        q.pop();
-        cout << node << " ";
-        visited[node] = true;
-        for(auto nbr : g[node]){
-            if(visited[nbr]) continue;
-            indegree[nbr]--;
-            if(indegree[nbr] == 0){
-                q.push(nbr);
-            }
+    int sum(int l, int r){
+        return sum(r) - sum(l-1);
+    }
+
+    void add(int idx, int delta){
+        for(; idx < n ; idx = idx | (idx+1)){
+            bit[idx] += delta;
         }
     }
-}
-
+};
 
 void solve() {
-    ll n, m;
-    cin >> n >> m;
-    g.assign(n, list<ll>());
 
-    while(m--){
-        int u, v;
-        cin >> u >> v;
-        u--; v--;
-        g[u].push_back(v);
-    }
-    topologicalSort(n);
 }
 
 int main(int argc, char const *argv[]) {
