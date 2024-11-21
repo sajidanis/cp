@@ -33,73 +33,10 @@ void file_i_o()
 #endif
 }
 
-vi wt;
-vi c;
-
-ll dp[105][100005];
-
-ll knapsack(ll i, ll w, ll n){
-    if(i == n){
-        return 0;
-    }
-    if(w <= 0) return 0;
-    if(dp[i][w] != -1) return dp[i][w];
-    // pick
-    ll res = 0;
-    ll f1 = 0;
-    if(wt[i] <= w){
-        f1 = c[i] + knapsack(i+1, w-wt[i], n);
-    }
-    ll f2 = knapsack(i+1, w, n);
-    res = max(f1, f2);
-    return dp[i][w] = res;
-}
-
-ll knapsackBU(ll W, ll n){
-    vector<vi> dp(n+1, vi(W+1, 0));
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp[i][j] = dp[i-1][j];
-            if(wt[i] <= j){
-                dp[i][j] = max(dp[i][j], c[i] + dp[i-1][j-wt[i]]);
-            }
-        }
-    }
-    return dp[n][W];
-}
-
-ll knapsacBU_better(ll W, ll n){
-    vi dp1(W+1, 0);
-    vi dp2(W+1, 0);
-
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp2[j] = dp1[j];
-            if(wt[i] <= j){
-                dp2[j] = max(dp1[j], c[i] + dp1[j-wt[i]]);
-            }
-        }
-        dp2.swap(dp1);
-        dp2.clear();
-    }
-    return dp1[W];
-}
+// DP[i][w] = max(DP[i-1][w] , DP[i][w-wi])
 
 void solve() {
-    memset(dp, -1, sizeof dp);
-    ll n, W;
-    cin >> n >> W;
-    wt.push_back(0);
-    c.push_back(0);
-    loop(i, 0, n){
-        ll w, cost;
-        cin >> w >> cost;
-        wt.push_back(w);
-        c.push_back(cost);
-    }
 
-    // cout << knapsack(0, W, n);
-    cout << knapsacBU_better(W, n);
 }
 
 int main(int argc, char const *argv[]) {

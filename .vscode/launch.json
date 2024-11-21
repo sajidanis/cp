@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
       {
+        "type": "java",
+        "name": "H_grid1",
+        "request": "launch",
+        "mainClass": "H_grid1",
+        "projectName": "cp_14b1b27d"
+      },
+      {
         "name": "g++ - Build and debug active file",
         "type": "cppdbg",
         "request": "launch",

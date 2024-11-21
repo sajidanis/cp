@@ -33,73 +33,42 @@ void file_i_o()
 #endif
 }
 
-vi wt;
-vi c;
+vector<pair<int, int>> groups;
 
-ll dp[105][100005];
+int rem(int i, int j, int extras){
+    if(i > j) return 0;
+    int k = groups[i].second + extras;
+    int ans = (k*k) + rem(i+1, j, 0);
 
-ll knapsack(ll i, ll w, ll n){
-    if(i == n){
-        return 0;
-    }
-    if(w <= 0) return 0;
-    if(dp[i][w] != -1) return dp[i][w];
-    // pick
-    ll res = 0;
-    ll f1 = 0;
-    if(wt[i] <= w){
-        f1 = c[i] + knapsack(i+1, w-wt[i], n);
-    }
-    ll f2 = knapsack(i+1, w, n);
-    res = max(f1, f2);
-    return dp[i][w] = res;
-}
-
-ll knapsackBU(ll W, ll n){
-    vector<vi> dp(n+1, vi(W+1, 0));
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp[i][j] = dp[i-1][j];
-            if(wt[i] <= j){
-                dp[i][j] = max(dp[i][j], c[i] + dp[i-1][j-wt[i]]);
-            }
+    for(int t = i + 2; t <= j ; t++){
+        if(groups[t].first == groups[i].first){
+            ans = max(ans, rem(i+1, t-1, 0) + rem(t, j, extras + groups[i].second));
         }
     }
-    return dp[n][W];
+    return ans;
 }
 
-ll knapsacBU_better(ll W, ll n){
-    vi dp1(W+1, 0);
-    vi dp2(W+1, 0);
-
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp2[j] = dp1[j];
-            if(wt[i] <= j){
-                dp2[j] = max(dp1[j], c[i] + dp1[j-wt[i]]);
-            }
+int removeBoxes(vector<int>& boxes) {
+    int n = boxes.size();
+    
+    pair<int, int> temp = {-1, 0};
+    for(int i = 0 ; i < n; i++){
+        if(boxes[i] == temp.first){
+            temp.second++;
+        } else {
+            if(temp.first != -1)groups.push_back(temp);
+            temp.first = boxes[i];
+            temp.second = 1;
         }
-        dp2.swap(dp1);
-        dp2.clear();
     }
-    return dp1[W];
+    groups.push_back(temp);
+
+    return rem(0, groups.size() - 1, 0);
 }
 
 void solve() {
-    memset(dp, -1, sizeof dp);
-    ll n, W;
-    cin >> n >> W;
-    wt.push_back(0);
-    c.push_back(0);
-    loop(i, 0, n){
-        ll w, cost;
-        cin >> w >> cost;
-        wt.push_back(w);
-        c.push_back(cost);
-    }
-
-    // cout << knapsack(0, W, n);
-    cout << knapsacBU_better(W, n);
+    vector<int> boxes = {1, 3, 2, 2, 2, 3, 4, 3, 1};
+    cout << removeBoxes(boxes);
 }
 
 int main(int argc, char const *argv[]) {

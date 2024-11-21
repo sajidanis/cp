@@ -28,8 +28,8 @@ void file_i_o()
     cin.tie(0);
     cout.tie(0);
 #ifndef ONLINE_JUDGE
-    freopen("input", "r", stdin);
-    freopen("output", "w", stdout);
+    freopen("../input", "r", stdin);
+    freopen("../output", "w", stdout);
 #endif
 }
 

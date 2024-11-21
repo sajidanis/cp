@@ -33,80 +33,57 @@ void file_i_o()
 #endif
 }
 
-vi wt;
-vi c;
-
-ll dp[105][100005];
-
-ll knapsack(ll i, ll w, ll n){
-    if(i == n){
-        return 0;
-    }
-    if(w <= 0) return 0;
-    if(dp[i][w] != -1) return dp[i][w];
-    // pick
-    ll res = 0;
-    ll f1 = 0;
-    if(wt[i] <= w){
-        f1 = c[i] + knapsack(i+1, w-wt[i], n);
-    }
-    ll f2 = knapsack(i+1, w, n);
-    res = max(f1, f2);
-    return dp[i][w] = res;
-}
-
-ll knapsackBU(ll W, ll n){
-    vector<vi> dp(n+1, vi(W+1, 0));
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp[i][j] = dp[i-1][j];
-            if(wt[i] <= j){
-                dp[i][j] = max(dp[i][j], c[i] + dp[i-1][j-wt[i]]);
-            }
+set<int> find1100(string &s){
+    ll l = 0, r = 3;
+    set<int> ans;
+    while(r < s.size()){
+        if(s[l] == '1' and s[l+1] == '1' and s[l+2] == '0' and s[l+3] == '0'){
+            ans.insert(l);
         }
+        l++; r ++;
     }
-    return dp[n][W];
-}
-
-ll knapsacBU_better(ll W, ll n){
-    vi dp1(W+1, 0);
-    vi dp2(W+1, 0);
-
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp2[j] = dp1[j];
-            if(wt[i] <= j){
-                dp2[j] = max(dp1[j], c[i] + dp1[j-wt[i]]);
-            }
-        }
-        dp2.swap(dp1);
-        dp2.clear();
-    }
-    return dp1[W];
+    return ans;
 }
 
 void solve() {
-    memset(dp, -1, sizeof dp);
-    ll n, W;
-    cin >> n >> W;
-    wt.push_back(0);
-    c.push_back(0);
-    loop(i, 0, n){
-        ll w, cost;
-        cin >> w >> cost;
-        wt.push_back(w);
-        c.push_back(cost);
-    }
+    string s;
+    cin >> s;
+    set<int> ans = find1100(s);
+    ll q;
+    cin >> q;
+    vector<pair<ll, ll>> op(q);
+    loop(i, 0, q){
+        int x,y;
+        cin >> x >> y;
+        x--;
 
-    // cout << knapsack(0, W, n);
-    cout << knapsacBU_better(W, n);
+        if(s[x] - '0' == y){
+            cout << ((ans.size() > 0) ? "YES\n" : "NO\n");
+            continue;
+        }
+
+        for (int j = max(0, x - 3); j <= x; ++j) {
+            if (j + 3 < s.size() && s.substr(j, 4) == "1100") {
+                ans.erase(j);
+            }
+        }
+
+        s[x] = '0' + y;
+
+        for (int j = max(0, x - 3); j <= x; ++j) {
+            if (j + 3 < s.size() && s.substr(j, 4) == "1100") {
+                ans.insert(j);
+            }
+        }
+        cout << ((ans.size() > 0) ? "YES\n" : "NO\n");
+    }
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    //cin >> t;
+    cin >> t;
     while (t--) {
          solve();
          cout << "\n";

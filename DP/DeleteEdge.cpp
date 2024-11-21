@@ -33,73 +33,66 @@ void file_i_o()
 #endif
 }
 
-vi wt;
-vi c;
-
-ll dp[105][100005];
-
-ll knapsack(ll i, ll w, ll n){
-    if(i == n){
-        return 0;
+int getSubtreeSum(int root, int par, vector<list<int>> &graph, vector<int> &dp, vector<int> &A){
+    if(graph[root].size() == 1){
+        return dp[root] = A[root-1];
     }
-    if(w <= 0) return 0;
-    if(dp[i][w] != -1) return dp[i][w];
-    // pick
-    ll res = 0;
-    ll f1 = 0;
-    if(wt[i] <= w){
-        f1 = c[i] + knapsack(i+1, w-wt[i], n);
+    
+    if(dp[root] != -1) return dp[root];
+    
+    int total_sum = A[root-1];
+    
+    for(auto &nbr : graph[root]){
+        if(nbr == par) continue;
+        total_sum += getSubtreeSum(nbr, root, graph, dp, A);
     }
-    ll f2 = knapsack(i+1, w, n);
-    res = max(f1, f2);
-    return dp[i][w] = res;
+    
+    return dp[root] = total_sum;
 }
 
-ll knapsackBU(ll W, ll n){
-    vector<vi> dp(n+1, vi(W+1, 0));
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp[i][j] = dp[i-1][j];
-            if(wt[i] <= j){
-                dp[i][j] = max(dp[i][j], c[i] + dp[i-1][j-wt[i]]);
-            }
+int deleteEdge(vector<int> &A, vector<vector<int> > &B) {
+    long long total_sum = 0;
+    for(auto &el : A) total_sum += el;
+    
+    long long S = total_sum / 2;
+    
+    vector<list<int>> graph(A.size() + 1, list<int>());
+    vector<int> dp(A.size() + 1, -1);
+    for(auto &el : B){
+        graph[el[0]].push_back(el[1]);
+        graph[el[1]].push_back(el[0]);
+    }
+    
+    getSubtreeSum(1, -1, graph, dp, A);
+    
+    long long bestFound = INT_MAX;
+    long long X = 0;
+    for(int i = 1 ; i < dp.size() ; i++){
+        if(abs(S - dp[i]) < bestFound){
+            X = dp[i];
+            bestFound = abs(S - dp[i]);
         }
     }
-    return dp[n][W];
-}
-
-ll knapsacBU_better(ll W, ll n){
-    vi dp1(W+1, 0);
-    vi dp2(W+1, 0);
-
-    loop(i, 1, n+1){
-        loop(j, 1, W+1){
-            dp2[j] = dp1[j];
-            if(wt[i] <= j){
-                dp2[j] = max(dp1[j], c[i] + dp1[j-wt[i]]);
-            }
-        }
-        dp2.swap(dp1);
-        dp2.clear();
-    }
-    return dp1[W];
+    
+    return (X * (total_sum - X)) % (1000000007);
 }
 
 void solve() {
-    memset(dp, -1, sizeof dp);
-    ll n, W;
-    cin >> n >> W;
-    wt.push_back(0);
-    c.push_back(0);
+    ll n, m;
+    cin >> n >> m;
+
+    vector<int> A(n);
     loop(i, 0, n){
-        ll w, cost;
-        cin >> w >> cost;
-        wt.push_back(w);
-        c.push_back(cost);
+        cin >> A[i];
     }
 
-    // cout << knapsack(0, W, n);
-    cout << knapsacBU_better(W, n);
+    vector<vector<int>> B(m, vector<int>(2));
+
+    loop(i, 0, m){
+        cin >> B[i][0] >> B[i][1];
+    }
+
+    cout << deleteEdge(A, B);
 }
 
 int main(int argc, char const *argv[]) {
