@@ -3,6 +3,20 @@
     "configurations": [
       {
         "type": "java",
+        "name": "Solution",
+        "request": "launch",
+        "mainClass": "Solution",
+        "projectName": "cp_14b1b27d"
+      },
+      {
+        "type": "java",
+        "name": "ConferenceScheduler",
+        "request": "launch",
+        "mainClass": "ConferenceScheduler",
+        "projectName": "cp_14b1b27d"
+      },
+      {
+        "type": "java",
         "name": "H_grid1",
         "request": "launch",
         "mainClass": "H_grid1",
