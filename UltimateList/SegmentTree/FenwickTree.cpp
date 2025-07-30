@@ -33,60 +33,41 @@ void file_i_o()
 #endif
 }
 
-struct FenwickTree{
+struct FenwickTree {
+    vi bit;
     size_t size;
-    vi bits;
 
     FenwickTree(size_t n){
         this->size = n;
-        bits.assign(n, 0);
+        bit.assign(n, 0);
+    }
+
+    FenwickTree(vi const &arr): FenwickTree(arr.size()){
+        for(ll i = 0; i < arr.size(); i++){
+            bit[i] += arr[i];
+            ll r = i | (i+1);
+            if(r < this->size) bit[r] += bit[i]; 
+        }
     }
 
     void update(ll idx, ll val){
         for(; idx < size; idx |= (idx + 1)){
-            bits[idx] += val;
+            bit[idx] += val;
         }
     }
 
     ll sum(ll r){
         ll res = 0;
         for(; r >= 0; r = (r & (r + 1)) - 1){
-            res += bits[r];
+            res += bit[r];
         }
         return res;
     }
 
-    ll sum(ll l, ll r){
-        return sum(r) - sum(l);
+    ll range_sum(ll l, ll r) {
+        return sum(r) - sum(l - 1);
     }
 };
-
-ll count_valid_pairs(vi &arr) {
-    ll n = arr.size();
-    unordered_map<ll, ll> prefix_freq, suffix_freq;
-    vector<ll> prefix(n), suffix(n);
-
-    // Compute prefix frequencies
-    for (ll i = 0; i < n; i++) {
-        prefix[i] = ++prefix_freq[arr[i]];
-    }
-
-    // Compute suffix frequencies
-    for (ll i = n - 1; i >= 0; i--) {
-        suffix[i] = ++suffix_freq[arr[i]];
-    }
-    ll result = 0;  
-
-    FenwickTree ft(n+1);
-
-    for(ll j = n-1; j > 0; j--){
-        ft.update(suffix[j], 1);
-        result += ft.sum(prefix[j-1] - 1);
-    }
-
-    return result;
-}
-
 
 void solve() {
     ll n;
@@ -94,8 +75,9 @@ void solve() {
     vi arr(n);
     loop(i, 0, n) cin >> arr[i];
 
-    int res = count_valid_pairs(arr);
-    cout << res;
+    FenwickTree ft(arr);
+
+    cout << ft.range_sum(0, 4) << endl;
 }
 
 int main(int argc, char const *argv[]) {

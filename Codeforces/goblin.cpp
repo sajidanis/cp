@@ -28,81 +28,26 @@ void file_i_o()
     cin.tie(0);
     cout.tie(0);
 #ifndef ONLINE_JUDGE
-    freopen("../../input", "r", stdin);
-    freopen("../../output", "w", stdout);
+    freopen("../input", "r", stdin);
+    freopen("../output", "w", stdout);
 #endif
 }
-
-struct FenwickTree{
-    size_t size;
-    vi bits;
-
-    FenwickTree(size_t n){
-        this->size = n;
-        bits.assign(n, 0);
-    }
-
-    void update(ll idx, ll val){
-        for(; idx < size; idx |= (idx + 1)){
-            bits[idx] += val;
-        }
-    }
-
-    ll sum(ll r){
-        ll res = 0;
-        for(; r >= 0; r = (r & (r + 1)) - 1){
-            res += bits[r];
-        }
-        return res;
-    }
-
-    ll sum(ll l, ll r){
-        return sum(r) - sum(l);
-    }
-};
-
-ll count_valid_pairs(vi &arr) {
-    ll n = arr.size();
-    unordered_map<ll, ll> prefix_freq, suffix_freq;
-    vector<ll> prefix(n), suffix(n);
-
-    // Compute prefix frequencies
-    for (ll i = 0; i < n; i++) {
-        prefix[i] = ++prefix_freq[arr[i]];
-    }
-
-    // Compute suffix frequencies
-    for (ll i = n - 1; i >= 0; i--) {
-        suffix[i] = ++suffix_freq[arr[i]];
-    }
-    ll result = 0;  
-
-    FenwickTree ft(n+1);
-
-    for(ll j = n-1; j > 0; j--){
-        ft.update(suffix[j], 1);
-        result += ft.sum(prefix[j-1] - 1);
-    }
-
-    return result;
-}
-
 
 void solve() {
     ll n;
     cin >> n;
-    vi arr(n);
-    loop(i, 0, n) cin >> arr[i];
+    string str;
+    cin >> str;
+    string pat = "-_-";
 
-    int res = count_valid_pairs(arr);
-    cout << res;
+    
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    //cin >> t;
+    cin >> t;
     while (t--) {
          solve();
          cout << "\n";
