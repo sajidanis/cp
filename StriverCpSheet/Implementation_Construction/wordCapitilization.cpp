@@ -34,14 +34,26 @@ void file_i_o()
 }
 
 void solve() {
+    string s;
+    cin >> s;
 
+    char ch = s[0];
+
+    if (ch >= 'a' and ch <= 'z') {
+        ch = ch - ('a' - 'A');
+    }
+    
+    cout << ch;
+    loop(i, 1, s.size()) {
+        cout << s[i];
+    }
 }
 
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
     file_i_o();
     ll t = 1;
-    cin >> t;
+    //cin >> t;
     while (t--) {
          solve();
          cout << "\n";
